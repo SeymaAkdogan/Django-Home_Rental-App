@@ -1,0 +1,162 @@
+{% extends "base.html"%}
+{% load static %}
+{% load mathfilters %}
+{% block content %}
+
+<style>
+    #cart {
+      background-image: url('/static/img/door.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow-x: hidden;
+      height: 600px;
+    }
+  </style>
+
+<div class="" id="cart">
+   
+
+    <div class="row mx-12" style="margin-top: 75px;">
+        {% if error %}
+        <div class='alert alert-danger' id="error">
+            {{ error }} 
+            <span class="d-inline text-right" id="close-error" style="cursor: pointer;"><i class="fas fa-times"></i></span>
+        </div>
+        {% endif %}
+        <div class="col-md-8">
+            <table class="table table-hover text-black text-lg font-normal">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Start Date - End Date</th>
+                        <th scope="col">Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if cartItems %}
+                        {% for cartItem in cartItems %}
+                            <tr>
+                                <td>
+                                    {% for image in cartItem.home.images.all %}
+                                        {% if image.name == 'cover' %}
+                                        <a href="{% url 'home_details' cartItem.home.slug %}" target="_blank">
+                                        <img src="{{ image.img.url }}" alt="" style="height: 120px;">
+                                    </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ cartItem.home.location|title }}
+                                </td>
+                                <td>{{ cartItem.start_time }} - {{ cartItem.end_time }}</td>
+                                <td>{{ cartItem.price }}</td>
+                                <td>
+                                    <a class="btn bg-red-800 text-white" href="{% url 'remove_reservation' cartItem.home.id %}" role="button">X</a>
+                                    <button type="button" class="btn bg-red-800" id="edit_btn" onclick="edit({{cartItem.home.id}},'{{cartItem.home.start_time}}','{{cartItem.home.end_time}}')"> <i class="fas fa-edit" style="color: white;"></i> </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-info uppercase">
+                            You Do Not Have a Reservation Yet !!
+                        </div>
+                    {% endif %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-1"></div>
+
+        {% if cartItems %}
+            <div class="col-md-3 mt-4">
+                <div class="card bg-gray-200">
+                    <div class="card-body">
+                        <div class="card-title h4">Cart Summary</div>
+                        <div class="card-text">
+                            <table class="table table-borderless mt-3">
+
+                                <tbody>
+                                    <tr>
+                                        <td>Product Total</td>
+                                        <td>{{total_price}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cargo Total</td>
+                                        <td>10</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <p class="text-end h5"></p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p class="text-center">
+                            <button type="button" class="btn text-white mt-3" style="background-color: #367692;">Confirm Cart</button>
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row mx-12">
+        <div class="col-md-6" id="edit_form">
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    // Input Change
+    function typeChange(e, type, newType) {
+        if (type == 'text') {
+            e.type = newType;
+        } else if (type == "date") {
+            if (e.value != null)
+                e.type = newType;
+        }
+    }
+
+    function edit(id,start_time,end_time)
+    {
+        var form = document.getElementById('edit_form');
+        form.innerHTML = `
+            <h4 class="mb-3">Change Reservation Date </h4>
+            <form  action="/edit-reservation/`+ id + `" >
+                <div class="row">
+                    <div class="col border-1 border-gray-600">
+                        <input type="text" id="start_time" name="start_time"
+                            class="form-control border-none focus:border-none hover:border-none active:border-none active:shadow-none"
+                            placeholder="`+start_time+`" onfocus="typeChange(this,'text','date')"
+                            onblur="typeChange(this,'date','text')">
+                    </div>
+                    <div class="col border-1 border-gray-600">
+                        <input type="text" id="end_time" name="end_time"
+                            class="form-control border-none focus:border-none hover:border-none active:border-none active:shadow-none"
+                            placeholder="`+end_time+`" onfocus="typeChange(this,'text','date')"
+                            onblur="typeChange(this,'date','text')">
+                    </div>
+                    <button type="submit" class="btn bg-red-800 text-white my-3">Change Reserve</button>
+                </div>
+            </form>
+        `;
+
+    }
+</script>
+
+<script>
+    $(document).ready(function() {
+        $("#close-error").click(function(e) {
+            $("#error").hide();
+            window.location = "http://127.0.0.1:8000/cart";
+            e.preventDefault();
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html"%} 
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <div class="row" style="margin-top: 75px;">
+        <h1>My Profile</h1>
+         <hr />
+        <div class="col-md-8 mb-3">
+            <form method='POST'>
+                {% csrf_token %}
+                {% if error %}<div class='alert alert-{{class}}'>{{ error }}</div>{% endif %}
+              
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="username" class="form-control" name='username' value='{{ username}}' disabled/>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name='email' value='{{ email}}'/>
+                </div>
+        
+                <div class='row mb-3'>
+                    <div class='col'>
+                        <label for="firstname" class="form-label">Firstname</label>
+                        <input type="text" class="form-control" name='firstname' value='{{ firstname }}'/>
+                    </div>
+                    <div class='col'>
+                        <label for="lastname" class="form-label">Lastname</label>
+                        <input type="text" class="form-control" name='lastname' value='{{ lastname}}'/>
+                    </div>
+                </div>
+                <div class='row mb-3'>
+                    <div class='col'>
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name='password'/>
+                    </div>
+                    <div class='col'>
+                        <label for="repassword" class="form-label">RePassword</label>
+                        <input type="password" class="form-control" name='repassword'/>
+                    </div>
+                </div>
+                
+        
+                
+                <button type="submit" class="btn btn-danger mt-3">Update</button>
+            </form>
+        </div>
+        <div class="col-md-4 mb-3">
+            <img src="{% static 'img/avatar.png' %}" alt="" style="height: 300px;">
+        </div>
+    </div>
+ 
+    
+
+</div>
+{% endblock %}

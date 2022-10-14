@@ -1,0 +1,100 @@
+{% extends "base.html"%}
+
+{% block content %}
+<div class="container my-6">
+    {% if error %}
+    <div class='alert alert-danger' id="error">
+        {{ error }} 
+        <span class="d-inline text-right" id="close-error" style="cursor: pointer;"><i class="fas fa-times"></i></span>
+    </div>
+    {% endif %}
+    <h5 class="text-xl font-medium mb-3">
+        {{ home.name|title }} <i class="fas fa-circle text-sm "></i> <span>{{ home.location }}</span>
+    </h5>
+    <div class="grid grid-cols-7 gap-4">
+        {% for image in home.images.all %}
+            {% if image.name == 'cover' %}
+                <div class="col-span-3 ">
+                    <img class="" src="{{ image.img.url }}" alt="" style="height: 400px;">
+                </div>
+            {% else %}
+                <div class="col-span-2">
+                    <img class="" src="{{ image.img.url }}" alt="" style="height: 400px;">
+                </div>
+            {% endif %}
+        {% endfor %}
+      </div>
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <h5 class="card-title text-xl">
+                Home Owner : {{ home.owner.first_name }}
+            </h5>
+            <p class="card-text">{{ home.description }}</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 border-1 border-gray-400 shadow-xl">
+                <div class="card-body">
+                    <h5 class="card-title">{{ home.price }} $</h5>
+                    <p class="card-text">
+                    <form class="mx-2" action="{% url 'add_reservation' home.id %}">
+                        <div class="row">
+                            <div class="col border-1 border-gray-600">
+                                <input type="text" id="start_time" name="start_time"
+                                    class="form-control border-none focus:border-none hover:border-none active:border-none active:shadow-none"
+                                    placeholder="{{home.start_time}}" onfocus="typeChange(this,'text','date')"
+                                    onblur="typeChange(this,'date','text')">
+                            </div>
+                            <div class="col border-1 border-gray-600">
+                                <input type="text" id="end_time" name="end_time"
+                                    class="form-control border-none focus:border-none hover:border-none active:border-none active:shadow-none"
+                                    placeholder="{{home.end_time}}" onfocus="typeChange(this,'text','date')"
+                                    onblur="typeChange(this,'date','text')">
+                            </div>
+                            <button type="submit" class="btn my-3"
+                                style="background-image: linear-gradient(to right, rgb(255,192,203), rgb(238, 71, 149));">Reserve</button>
+                        </div>
+                    </form>
+                    </p>
+                    <p class="card-text">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ home.price }} $ x {{ days }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ total_price }} $
+                        </div>
+                    </div>
+
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Input Change
+    function typeChange(e, type, newType) {
+        if (type == 'text') {
+            e.type = newType;
+        } else if (type == "date") {
+            if (e.value != null)
+                e.type = newType;
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function() {
+        $("#close-error").click(function(e) {
+            $("#error").hide();
+            window.location = "http://127.0.0.1:8000/home/{{ home.slug }}";
+            e.preventDefault();
+        });
+    });
+
+    
+</script>
+
+{% endblock %}
